@@ -1,5 +1,6 @@
 package com.pentatask
 
+import android.os.Bundle // Add this import
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -13,9 +14,13 @@ class MainActivity : ReactActivity() {
    */
   override fun getMainComponentName(): String = "PentaTask"
 
+  override fun onCreate(savedInstanceState: Bundle?) { // Correct method declaration
+    super.onCreate(null) // Pass null as required
+  }
+
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
-   * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
+   * which allows you to enable New Architecture with a single boolean flag [fabricEnabled]
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
