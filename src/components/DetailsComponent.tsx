@@ -74,9 +74,8 @@ const DetailsComponent: FC<RouterProp> = ({navigation}) => {
 
       if (user) {
         const ordersRef = collection(FIREBASE_DB, 'orders');
-        const q = query(ordersRef, where('userId', '==', user.uid));
-        const querySnapshot = await getDocs(q);
 
+        // Prepare order data
         const orderData = {
           userId: user.uid,
           totalAmount: totalSum,
@@ -84,37 +83,15 @@ const DetailsComponent: FC<RouterProp> = ({navigation}) => {
           timestamp: Timestamp.fromMillis(Date.now()),
         };
 
-        if (querySnapshot.empty) {
-          await addDoc(ordersRef, {
-            userId: user.uid,
-            totalAmount: totalSum,
-            orderedProducts: orderedProducts.map(p => p.name),
-            timestamp: orderData.timestamp,
-          });
-          console.log('First order created');
-        } else {
-          querySnapshot.forEach(async doc => {
-            const orderRef = doc.ref;
-            await setDoc(
-              orderRef,
-              {
-                orders: [
-                  ...doc.data().orders,
-                  {
-                    ...orderData,
-                    timestamp: orderData.timestamp,
-                  },
-                ],
-              },
-              {merge: true},
-            );
-            console.log('Order added to existing collection');
-          });
-        }
-      }
-    }
+        // Add a new document for every new order
+        await addDoc(ordersRef, orderData);
+        console.log('New order created');
 
-    navigation.navigate('Home');
+        // If you still want to manage orders for users separately, you can store orders in a subcollection.
+      }
+
+      navigation.navigate('Home');
+    }
   };
 
   return (
